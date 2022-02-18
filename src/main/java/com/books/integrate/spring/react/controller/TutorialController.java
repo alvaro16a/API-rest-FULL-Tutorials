@@ -49,7 +49,7 @@ public class TutorialController {
 	}
 
 	@GetMapping("/tutorials/maxprice/{maxPrice}")
-	public ArrayList<String> obtenerTutorialPorMaximoPrecio(@PathVariable("maxPrice") Integer maxPrice){
+	public ArrayList<String> getTutorialByMaxPrice(@PathVariable("maxPrice") Integer maxPrice){
 		ArrayList<Tutorial> tutoriales = (ArrayList<Tutorial>) tutorialRepository.findAll();
 		ArrayList<String> title = new ArrayList();
 			for (Tutorial tutorial : tutoriales) {
