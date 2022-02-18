@@ -59,12 +59,11 @@ public class TutorialController {
 		}
 	}
 
-
 	@PostMapping("/tutorials")
 	public ResponseEntity<Tutorial> createTutorial(@RequestBody Tutorial tutorial) {
 		try {
 			Tutorial _tutorial = tutorialRepository
-					.save(new Tutorial(tutorial.getTitle(), tutorial.getDescription(),  false));
+					.save(new Tutorial(tutorial.getTitle(), tutorial.getDescription(), false));
 			return new ResponseEntity<>(_tutorial, HttpStatus.CREATED);
 		} catch (Exception e) {
 			return new ResponseEntity<>(null, HttpStatus.EXPECTATION_FAILED);
@@ -86,13 +85,42 @@ public class TutorialController {
 		}
 	}
 
-//HttpStatus
+	@PutMapping("/tutorials/update/{title}")
+	public ResponseEntity<Tutorial> updateTutorialByTitle(@PathVariable("title") String title, @RequestBody Tutorial tutorial) {
+		List<Tutorial> tutorialsData = tutorialRepository.findByTitleContaining(title);
+		try {
+			for (Tutorial _tutorial : tutorialsData) {
+				_tutorial.setTitle(tutorial.getTitle());
+				_tutorial.setDescription(tutorial.getDescription());
+				_tutorial.setPublished(tutorial.isPublished());
+				return new ResponseEntity<>(tutorialRepository.save(_tutorial), HttpStatus.OK);
+			}
+		} catch (Exception e) {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		}
+		return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+	}
+
+	// HttpStatus
 	@DeleteMapping("/tutorials/{id}")
 	public ResponseEntity<String> deleteTutorial(@PathVariable("id") long id) {
 		try {
 			tutorialRepository.deleteById(id);
-				return new ResponseEntity<>("Tutorials DELETE!! ",HttpStatus.NO_CONTENT);
-			} catch (Exception e) {
+			return new ResponseEntity<>("Tutorials DELETE!! ", HttpStatus.NO_CONTENT);
+		} catch (Exception e) {
+			return new ResponseEntity<>(HttpStatus.EXPECTATION_FAILED);
+		}
+	}
+
+	@DeleteMapping("/delete/{titulo}")
+	public ResponseEntity<String> deleteTutorialBytitle(@PathVariable("titulo") String titulo) {
+		try {
+			List<Tutorial> tutoriales = tutorialRepository.findByTitleContaining(titulo);
+			for (Tutorial nombre : tutoriales) {
+				tutorialRepository.deleteById(nombre.getId());
+			}
+			return new ResponseEntity<>("Tutorials DELETE!! ", HttpStatus.NO_CONTENT);
+		} catch (Exception e) {
 			return new ResponseEntity<>(HttpStatus.EXPECTATION_FAILED);
 		}
 	}
