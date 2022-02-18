@@ -48,6 +48,33 @@ public class TutorialController {
 		}
 	}
 
+	@GetMapping("/tutorials/maxprice/{maxPrice}")
+	public ArrayList<String> obtenerTutorialPorMaximoPrecio(@PathVariable("maxPrice") Integer maxPrice){
+		ArrayList<Tutorial> tutoriales = (ArrayList<Tutorial>) tutorialRepository.findAll();
+		ArrayList<String> title = new ArrayList();
+			for (Tutorial tutorial : tutoriales) {
+				if(tutorial.getPrice()<=maxPrice){
+					title.add(tutorial.getTitle() + "precio: " + tutorial.getPrice());
+				}
+			}
+		return title;			
+    }
+	/*public ResponseEntity<List<Tutorial>> getTutorialsByPrice(@RequestParam(required = false) int price) {
+		try {
+			List<Tutorial> tutorials = new ArrayList<Tutorial>();
+
+			tutorialRepository.findByTitleContaining(title).forEach(tutorials::add);
+
+			if (tutorials.isEmpty()) {
+				return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+			}
+
+			return new ResponseEntity<>(tutorials, HttpStatus.OK);
+		} catch (Exception e) {
+			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}*/
+
 	@GetMapping("/tutorials/{id}")
 	public ResponseEntity<Tutorial> getTutorialById(@PathVariable("id") long id) {
 		Optional<Tutorial> tutorialData = tutorialRepository.findById(id);
@@ -63,7 +90,7 @@ public class TutorialController {
 	public ResponseEntity<Tutorial> createTutorial(@RequestBody Tutorial tutorial) {
 		try {
 			Tutorial _tutorial = tutorialRepository
-					.save(new Tutorial(tutorial.getTitle(), tutorial.getDescription(), false));
+					.save(new Tutorial(tutorial.getTitle(), tutorial.getDescription(), false,tutorial.getPrice()));
 			return new ResponseEntity<>(_tutorial, HttpStatus.CREATED);
 		} catch (Exception e) {
 			return new ResponseEntity<>(null, HttpStatus.EXPECTATION_FAILED);
@@ -151,3 +178,4 @@ public class TutorialController {
 	}
 
 }
+
